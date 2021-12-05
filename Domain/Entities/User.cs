@@ -17,5 +17,11 @@ namespace Domain.Entities
 
         public virtual ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<UserLoginToken>? UserLoginTokens { get; set; } = new List<UserLoginToken>();
+        public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<UserAddress>? UserAddresses { get; set; }
+        public virtual ICollection<ShoppingCart>? ShoppingCarts { get; set; }
+        public virtual ICollection<WishList>? WishLists { get; set; }
+        public virtual ICollection<Rating>? Ratings { get; set; }
+        public virtual ICollection<Comment>? Comments { get; set; }
     }
 }

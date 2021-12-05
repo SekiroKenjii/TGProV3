@@ -42,7 +42,7 @@ try
     var context = services.GetRequiredService<DataContext>();
     var defaultCredential = services.GetRequiredService<IOptions<DefaultCredential>>();
     await context.Database.MigrateAsync();
-    await SeedData.SeedDefaultCredential(context, defaultCredential.Value);
+    await SeedData.Execute(context, defaultCredential.Value);
 }
 catch (Exception ex)
 {
