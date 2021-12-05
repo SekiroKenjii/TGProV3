@@ -15,7 +15,7 @@ namespace Domain.Entities
         public Gender Gender { get; set; }
         public bool IsBlocked { get; set; }
 
-        public virtual ICollection<UserRole>? UserRoles { get; set; }
+        public virtual ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<UserLoginToken>? UserLoginTokens { get; set; } = new List<UserLoginToken>();
     }
 }
