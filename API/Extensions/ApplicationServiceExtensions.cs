@@ -1,9 +1,13 @@
 ﻿using Core;
 using Core.AutoMappers;
+using Core.Services;
 using Data;
 using Domain.Settings;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service;
+using System.Reflection;
 
 namespace API.Extensions
 {
@@ -13,7 +17,11 @@ namespace API.Extensions
         {
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
+            ).AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                options.DisableDataAnnotationsValidation = true;
+            });
 
             services.AddEndpointsApiExplorer();
 
@@ -70,6 +78,8 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services.Configure<RouteOptions>(options =>
             {
