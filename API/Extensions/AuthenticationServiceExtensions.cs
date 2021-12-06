@@ -1,6 +1,8 @@
 ﻿using Core.Accessors;
+using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Service;
 using Service.Security;
 using System.Text;
 
@@ -32,8 +34,8 @@ namespace API.Extensions
             services.AddHttpContextAccessor();
 
             services.AddTransient<IUserAccessor, UserAccessor>();
-            //services.AddScoped<ITokenService, TokenService>();
-            //services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             return services;
         }
