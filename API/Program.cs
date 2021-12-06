@@ -12,6 +12,8 @@ var config = builder.Configuration;
 // Add services to the container.
 builder.Services.AddApplicationServices(config);
 
+builder.Services.AddAuthenticationServices(config);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
