@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Core;
+using Data;
 using Domain.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -27,33 +28,33 @@ namespace API.Extensions
                         Url = new Uri("https://fb.com/thuong.votrung.5"),
                     }
                 });
-                //options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                //{
-                //    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
-                //      Enter 'Bearer' [space] and then your token in the text input below.
-                //      \r\n\r\nExample: 'Bearer 12345abcdef'",
-                //    Name = "Authorization",
-                //    In = ParameterLocation.Header,
-                //    Type = SecuritySchemeType.ApiKey,
-                //    Scheme = "Bearer"
-                //});
-                //options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                //{
-                //    {
-                //        new OpenApiSecurityScheme
-                //        {
-                //            Reference = new OpenApiReference
-                //            {
-                //                Type = ReferenceType.SecurityScheme,
-                //                Id = "Bearer"
-                //            },
-                //            Scheme = "oauth2",
-                //            Name = "Bearer",
-                //            In = ParameterLocation.Header,
-                //        },
-                //        new List<string>()
-                //    }
-                //});
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.AddDbContext<DataContext>(options =>
@@ -64,6 +65,8 @@ namespace API.Extensions
 
             services.Configure<DefaultCredential>(config.GetSection("DefaultCredential"));
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.Configure<RouteOptions>(options =>
             {
