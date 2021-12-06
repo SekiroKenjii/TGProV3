@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.AutoMappers;
 using Data;
 using Domain.Settings;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,8 @@ namespace API.Extensions
 
             services.Configure<DefaultCredential>(config.GetSection("DefaultCredential"));
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+
+            services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

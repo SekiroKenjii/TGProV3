@@ -2,7 +2,7 @@
 using CloudinaryDotNet.Actions;
 using Core.Accessors;
 using Core.Constants;
-using Core.Enums;
+using Domain.Enums;
 using Core.Wrappers;
 using Domain.Settings;
 using Microsoft.AspNetCore.Http;
