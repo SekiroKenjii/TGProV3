@@ -24,25 +24,47 @@ namespace Service.Photo
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<PhotoHandleResult> AddPhoto(IFormFile file, string gender = "Undefined")
+        public async Task<PhotoHandleResult> AddPhoto(IFormFile file, string entity, string? gender = null)
         {
             var uploadParams = new ImageUploadParams();
 
             if (file == null)
             {
-                var result = GetDefaultPhoto(gender);
-                return new PhotoHandleResult
+                if (entity == Applications.USER)
                 {
-                    PublicId = result.DefaultPublicId,
-                    PhotoUrl = result.DefaultPhotoUrl
-                };
+                    var result = GetDefaultPhoto(entity, gender);
+                    return new PhotoHandleResult
+                    {
+                        PublicId = result!.DefaultPublicId,
+                        PhotoUrl = result!.DefaultPhotoUrl
+                    };
+                }
+                if (entity == Applications.BRAND || entity == Applications.PRODUCT)
+                {
+                    var result = GetDefaultPhoto(entity);
+                    return new PhotoHandleResult
+                    {
+                        PublicId = result!.DefaultPublicId,
+                        PhotoUrl = result!.DefaultPhotoUrl
+                    };
+                }
             }
 
-            using var stream = file.OpenReadStream();
+            using var stream = file!.OpenReadStream();
+
+            uploadParams.Folder = $"TGProV3/{entity}/";
 
             uploadParams.File = new FileDescription(file.FileName, stream);
-            uploadParams.Folder = $"Messenger/users/";
-            uploadParams.Transformation = new Transformation().Height(500).Crop("fill");
+
+            if(entity == Applications.USER || entity == Applications.BRAND)
+            {
+                uploadParams.Transformation = new Transformation().Height(500).Crop("fill");
+            }
+            if (entity == Applications.PRODUCT)
+            {
+                uploadParams.Transformation = new Transformation().Height(800).Width(800).Crop("fill");
+            }
+
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             if (uploadResult.Error != null)
@@ -57,29 +79,52 @@ namespace Service.Photo
             };
         }
 
-        public async Task<string?> DeletePhoto(string publicId)
+        public async Task<string> DeletePhoto(string publicId)
         {
             var deleteParams = new DeletionParams(publicId);
             var result = await _cloudinary.DestroyAsync(deleteParams);
-            return result.Result == "ok" ? result.Result : null;
+            return result.Result;
         }
 
-        private static DefaultPhoto GetDefaultPhoto(string gender)
+        private static DefaultPhoto? GetDefaultPhoto(string entity, string? gender = null)
         {
-            if (gender == Gender.Female.ToString())
+            if(entity == Applications.USER)
             {
+                if (gender == Gender.Female.ToString())
+                {
+                    return new DefaultPhoto
+                    {
+                        DefaultPhotoUrl = Applications.DEFAUlT_FEMALE_AVATAR,
+                        DefaultPublicId = Applications.DEFAUlT_FEMALE_AVATAR_ID
+                    };
+                }
+
                 return new DefaultPhoto
                 {
-                    DefaultPhotoUrl = Applications.DEFAUlT_FEMALE_AVATAR,
-                    DefaultPublicId = Applications.DEFAUlT_FEMALE_AVATAR_ID
+                    DefaultPhotoUrl = Applications.DEFAUlT_MALE_AVATAR,
+                    DefaultPublicId = Applications.DEFAUlT_MALE_AVATAR_ID
                 };
             }
 
-            return new DefaultPhoto
+            if (entity == Applications.BRAND)
             {
-                DefaultPhotoUrl = Applications.DEFAUlT_MALE_AVATAR,
-                DefaultPublicId = Applications.DEFAUlT_MALE_AVATAR_ID
-            };
+                return new DefaultPhoto
+                {
+                    DefaultPhotoUrl = Applications.DEFAUlT_BRAND_PHOTO,
+                    DefaultPublicId = Applications.DEFAUlT_BRAND_PHOTO_ID
+                };
+            }
+
+            if (entity == Applications.PRODUCT)
+            {
+                return new DefaultPhoto
+                {
+                    DefaultPhotoUrl = Applications.DEFAUlT_PRODUCT_PHOTO,
+                    DefaultPublicId = Applications.DEFAUlT_PRODUCT_PHOTO_ID
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -7,8 +7,8 @@ namespace Core.Validators
     {
         public CategoryValidator()
         {
-            RuleFor(p => p.Name).NotEmpty().Length(50);
-            RuleFor(p => p.Description).Length(500);
+            RuleFor(p => p.Name).NotEmpty().Length(1,50);
+            RuleFor(p => p.Description).Length(1,500);
         }
     }
 }

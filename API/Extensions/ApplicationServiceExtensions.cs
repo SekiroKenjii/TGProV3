@@ -80,6 +80,7 @@ namespace API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBrandService, BrandService>();
 
             services.Configure<RouteOptions>(options =>
             {

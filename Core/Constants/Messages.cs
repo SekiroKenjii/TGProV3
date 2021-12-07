@@ -12,6 +12,10 @@
         public const string DELETE_FAILURE = "Failed To Delete New Resource";
         public const string UPDATE_FAILURE = "Failed To Update New Resource";
 
+        public const string ADD_SUCCESS = "Add New Resource Successfully";
+        public const string UPDATE_SUCCESS = "Update Requested Resource Successfully";
+        public const string DELETE_SUCCESS = "Delete Requested Resource Successfully";
+
         public static string RESOURCE_NOTFOUND(string entity) => $"{entity} Not Found";
     }
 }

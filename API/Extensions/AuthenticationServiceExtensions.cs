@@ -3,6 +3,7 @@ using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Service;
+using Service.Photo;
 using Service.Security;
 using System.Text;
 
@@ -34,6 +35,7 @@ namespace API.Extensions
             services.AddHttpContextAccessor();
 
             services.AddTransient<IUserAccessor, UserAccessor>();
+            services.AddTransient<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 

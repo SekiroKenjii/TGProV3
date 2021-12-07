@@ -1,8 +1,8 @@
-﻿using Core.DTOs.Category;
+﻿using Core.Constants;
+using Core.DTOs.Category;
 using Core.Exceptions;
 using Core.Services;
 using Core.Validators;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +39,7 @@ namespace API.Controllers
 
             if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
 
-            return HandleResult(await _categoryService.AddCategory(categoryDto));
+            return HandleResult(await _categoryService.AddCategory(categoryDto), Applications.Actions.Add);
         }
 
         [Authorize]
@@ -47,7 +47,13 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto categoryDto)
         {
-            return HandleResult(await _categoryService.UpdateCategory(id, categoryDto));
+            CategoryValidator validator = new();
+
+            var validationResult = validator.Validate(categoryDto);
+
+            if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
+
+            return HandleResult(await _categoryService.UpdateCategory(id, categoryDto), Applications.Actions.Update);
         }
 
         [Authorize]
@@ -55,7 +61,7 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            return HandleResult(await _categoryService.DeleteCategory(id));
+            return HandleResult(await _categoryService.DeleteCategory(id), Applications.Actions.Delete);
         }
     }
 }
