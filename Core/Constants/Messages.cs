@@ -16,6 +16,6 @@
         public const string UPDATE_SUCCESS = "Update Requested Resource Successfully";
         public const string DELETE_SUCCESS = "Delete Requested Resource Successfully";
 
-        public static string RESOURCE_NOTFOUND(string entity) => $"{entity} Not Found";
+        public static string RESOURCE_NOTFOUND(string entity) => $"Requested {entity} Not Found";
     }
 }

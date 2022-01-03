@@ -1,6 +1,4 @@
 ﻿namespace Core.DTOs.Category
 {
-    public class UpdateCategoryDto : AddCategoryDto
-    {
-    }
+    public class UpdateCategoryDto : AddCategoryDto { }
 }

@@ -1,6 +1,4 @@
 ﻿namespace Core.DTOs.Brand
 {
-    public class UpdateBrandDto : AddBrandDto
-    {
-    }
+    public class UpdateBrandDto : AddBrandDto { }
 }

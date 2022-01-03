@@ -2,10 +2,8 @@
 
 namespace Core.DTOs.Brand
 {
-    public class AddBrandDto
+    public class AddBrandDto : BasePropertiesDto
     {
-        public string? Name { get; set; }
-        public string? Description { get; set; }
         public IFormFile? Photo { get; set; }
     }
 }
