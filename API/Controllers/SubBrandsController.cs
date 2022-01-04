@@ -29,7 +29,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.GetSubBrands());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddSubBrand([FromBody] AddSubBrandDto subBrandDto)
         {
@@ -42,7 +42,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.AddSubBrand(subBrandDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateSubBrand(Guid id, [FromBody] UpdateSubBrandDto subBrandDto)
@@ -56,7 +56,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.UpdateSubBrand(id, subBrandDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteSubBrand(Guid id)

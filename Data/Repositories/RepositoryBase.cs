@@ -59,7 +59,7 @@ namespace Data.Repositories
             return await _db.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsNoTracking().ToListAsync();
         }
 
-        public async Task<T?> GetWithExpressionAsync(Expression<Func<T, bool>> expression, List<string>? includes = null)
+        public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression, List<string>? includes = null)
         {
             IQueryable<T> query = _db;
 

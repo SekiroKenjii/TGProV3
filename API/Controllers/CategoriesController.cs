@@ -29,7 +29,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.GetCategories());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] AddCategoryDto categoryDto)
         {
@@ -42,7 +42,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.AddCategory(categoryDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto categoryDto)
@@ -56,7 +56,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.UpdateCategory(id, categoryDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)

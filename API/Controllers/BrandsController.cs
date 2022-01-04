@@ -29,7 +29,7 @@ namespace API.Controllers
             return HandleResult(await _brandService.GetBrands());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddBrand([FromForm] AddBrandDto brandDto)
         {
@@ -42,7 +42,7 @@ namespace API.Controllers
             return HandleResult(await _brandService.AddBrand(brandDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateBrand(Guid id, [FromForm] UpdateBrandDto brandDto)
@@ -56,7 +56,7 @@ namespace API.Controllers
             return HandleResult(await _brandService.UpdateBrand(id, brandDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteBrand(Guid id)

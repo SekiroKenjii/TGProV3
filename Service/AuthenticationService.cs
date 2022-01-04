@@ -45,7 +45,7 @@ namespace Service
 
         public async Task<AuthenticationResponse> Login(LoginDto loginDto)
         {
-            var user = await _unitOfWork.Users.GetWithExpressionAsync(x => x.Email == loginDto.Email);
+            var user = await _unitOfWork.Users.GetFirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
             if (user == null) throw new NotFoundException(Messages.INCORRECT_EMAIL);
 
@@ -75,7 +75,7 @@ namespace Service
             Guid userId = _userAccessor.GetUserId();
 
             var user = await _unitOfWork.Users
-                .GetWithExpressionAsync(x => x.Id == userId, new List<string> { "UserLoginTokens" });
+                .GetFirstOrDefaultAsync(x => x.Id == userId, new List<string> { "UserLoginTokens" });
 
             if(user == null) throw new UnauthorizedException(Messages.RESOURCE_NOTFOUND("User"));
 

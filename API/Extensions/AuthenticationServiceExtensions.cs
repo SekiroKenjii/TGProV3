@@ -15,10 +15,10 @@ namespace API.Extensions
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
-            services.AddAuthentication(opt =>
+            services.AddAuthentication(options =>
             {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -30,6 +30,14 @@ namespace API.Extensions
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsModerator", policy =>
+                {
+                    policy.Requirements.Add(new IsModeratorRequirement());
+                });
             });
 
             services.AddHttpContextAccessor();
