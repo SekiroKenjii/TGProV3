@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/product-types")]
     public class ProductTypesController : BaseApiController
     {
         private readonly IProductTypeService _productTypeService;

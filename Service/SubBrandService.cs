@@ -60,7 +60,7 @@ namespace Service
         public async Task<SubBrandDto> GetSubBrand(Guid subBrandId)
         {
             var subBrand = await _unitOfWork.SubBrands
-                .GetWithExpressionAsync(x => x.Id == subBrandId,
+                .GetFirstOrDefaultAsync(x => x.Id == subBrandId,
                 new List<string> { "Category", "Brand" });
 
             if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));

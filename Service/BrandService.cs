@@ -111,11 +111,13 @@ namespace Service
             brand.LastModifiedAt = DateTime.UtcNow;
             brand.LastModifiedBy = _userAccessor.GetUserId();
 
-            if (brandDto.Photo != null && brand.LogoId != Applications.DEFAUlT_BRAND_PHOTO_ID)
+            if (brandDto.Photo != null)
             {
-                var deleteBrandPhoto = await _photoAccessor.DeletePhoto(brand.LogoId!);
-
-                if (deleteBrandPhoto != "ok") throw new Exception(deleteBrandPhoto);
+                if (brand.LogoId != Applications.DEFAUlT_BRAND_PHOTO_ID)
+                {
+                    var deleteBrandPhoto = await _photoAccessor.DeletePhoto(brand.LogoId!);
+                    if (deleteBrandPhoto != "ok") throw new Exception(deleteBrandPhoto);
+                }                
 
                 var brandPhoto = await _photoAccessor.AddPhoto(brandDto.Photo, Applications.BRAND);
 
