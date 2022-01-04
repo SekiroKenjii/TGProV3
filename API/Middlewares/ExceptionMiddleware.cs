@@ -20,12 +20,60 @@ namespace API.Middlewares
             try
             {
                 await _next(context);
+
+                switch (context.Response.StatusCode)
+                {
+                    case (int)HttpStatusCode.Unauthorized:
+                        await HandleUnauthorized(context);
+                        break;
+                    case (int)HttpStatusCode.Forbidden:
+                        await HandleForbidden(context);
+                        break;
+                }
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, exception.Message);
                 await HandleException(context, exception);
             }
+        }
+
+        private static async Task HandleUnauthorized(HttpContext context)
+        {
+            context.Response.ContentType = "application/json";
+
+            var response = new Response<string>
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "This resource requires an authenticated user",
+                Errors = default,
+                Data = default
+            };
+
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+            var json = JsonSerializer.Serialize(response, options);
+
+            await context.Response.WriteAsync(json);
+        }
+
+        private static async Task HandleForbidden(HttpContext context)
+        {
+            context.Response.ContentType = "application/json";
+
+            var response = new Response<string>
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "You are unauthorized to access this resource",
+                Errors = default,
+                Data = default
+            };
+
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+            var json = JsonSerializer.Serialize(response, options);
+
+            await context.Response.WriteAsync(json);
         }
 
         private static async Task HandleException(HttpContext context, Exception exception)

@@ -16,6 +16,7 @@ namespace API.Controllers
             _subBrandService = subBrandService;
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSubBrand(Guid id)
@@ -23,6 +24,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.GetSubBrand(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetSubBrands()
         {

@@ -16,6 +16,7 @@ namespace API.Controllers
             _conditionService = conditionService;
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetCondition(Guid id)
@@ -23,6 +24,7 @@ namespace API.Controllers
             return HandleResult(await _conditionService.GetCondition(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetConditions()
         {

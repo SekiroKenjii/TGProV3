@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/product-types")]
+    [Route("api/internal/product-types")]
     public class ProductTypesController : BaseApiController
     {
         private readonly IProductTypeService _productTypeService;
@@ -17,6 +17,7 @@ namespace API.Controllers
             _productTypeService = productTypeService;
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetProductType(Guid id)
@@ -24,6 +25,7 @@ namespace API.Controllers
             return HandleResult(await _productTypeService.GetProductType(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetProductTypes()
         {

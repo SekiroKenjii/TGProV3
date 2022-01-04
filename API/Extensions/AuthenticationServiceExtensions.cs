@@ -1,6 +1,7 @@
 ﻿using Core.Accessors;
 using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Service;
 using Service.Photo;
@@ -15,22 +16,19 @@ namespace API.Extensions
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = key,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                };
-            });
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+                    };
+                });
 
             services.AddAuthorization(options =>
             {
@@ -38,7 +36,14 @@ namespace API.Extensions
                 {
                     policy.Requirements.Add(new IsModeratorRequirement());
                 });
+                options.AddPolicy("IsStaff", policy =>
+                {
+                    policy.Requirements.Add(new IsStaffRequirement());
+                });
             });
+
+            services.AddTransient<IAuthorizationHandler, IsModeratorRequirementHandle>();
+            services.AddTransient<IAuthorizationHandler, IsStaffRequirementHandle>();
 
             services.AddHttpContextAccessor();
 

@@ -17,12 +17,21 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetBrandsPublic()
+        {
+            return HandleResult(await _brandService.GetBrandsPublic());
+        }
+
+        [Authorize(Policy = "IsStaff")]
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetBrand(Guid id)
         {
             return HandleResult(await _brandService.GetBrand(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetBrands()
         {

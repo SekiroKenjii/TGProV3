@@ -85,6 +85,15 @@ namespace Service
             return result;
         }
 
+        public async Task<List<CompactBrandDto>> GetBrandsPublic()
+        {
+            var brands = await _unitOfWork.Brands.GetAllAsync();
+
+            var result = _mapper.Map<List<CompactBrandDto>>(brands);
+
+            return result;
+        }
+
         public async Task<List<BrandDto>> GetBrands()
         {
             var brands = await _unitOfWork.Brands.GetAllAsync();

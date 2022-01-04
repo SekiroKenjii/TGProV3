@@ -16,6 +16,7 @@ namespace API.Controllers
             _categoryService = categoryService;
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetCategory(Guid id)
@@ -23,6 +24,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.GetCategory(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {

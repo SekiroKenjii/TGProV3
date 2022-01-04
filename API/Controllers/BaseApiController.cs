@@ -5,7 +5,7 @@ using System.Net;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/internal/[controller]")]
     [ApiController]
     public class BaseApiController : ControllerBase
     {
