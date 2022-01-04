@@ -24,7 +24,7 @@ namespace Data.Repositories
             _db.Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null)
+        public async Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null)
         {
             IQueryable<T> query = _db;
 
@@ -54,7 +54,7 @@ namespace Data.Repositories
             return await _db.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetPagedReponseAsync(int pageNumber, int pageSize)
+        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize)
         {
             return await _db.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsNoTracking().ToListAsync();
         }

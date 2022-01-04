@@ -31,21 +31,39 @@ namespace API.Middlewares
         private static async Task HandleException(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = exception switch
-            {
-                NotFoundException => (int)HttpStatusCode.NotFound,
-                BadRequestException => (int)HttpStatusCode.BadRequest,
-                UnauthorizedException => (int)HttpStatusCode.Unauthorized,
-                _ => (int)HttpStatusCode.InternalServerError,
-            };
 
             var response = new Response<string>
             {
-                StatusCode = context.Response.StatusCode,
-                Message = exception.Message,
                 Errors = default,
                 Data = default
             };
+
+            switch (exception)
+            {
+                case NotFoundException:
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    response.Message = exception.Message;
+                    break;
+                case BadRequestException:
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    response.Message = exception.Message;
+                    break;
+                case UnauthorizedException:
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    response.Message = exception.Message;
+                    break;
+                case ValidationException e:
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    response.Message = exception.Message;
+                    response.Errors = e.Errors;
+                    break;
+                default:
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    response.Message = exception.Message;
+                    break;
+            }
+
+            response.StatusCode = context.Response.StatusCode;
 
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 

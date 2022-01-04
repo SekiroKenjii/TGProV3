@@ -5,7 +5,7 @@ namespace Core.Accessors
 {
     public interface IPhotoAccessor
     {
-        Task<PhotoHandleResult> AddPhoto(IFormFile file, string gender);
-        Task<string?> DeletePhoto(string publicId);
+        Task<PhotoHandleResult> AddPhoto(IFormFile file,string entity, string? gender = null);
+        Task<string> DeletePhoto(string publicId);
     }
 }

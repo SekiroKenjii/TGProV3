@@ -1,4 +1,5 @@
-﻿using Core.Wrappers;
+﻿using Core.Constants;
+using Core.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,17 +9,37 @@ namespace API.Controllers
     [ApiController]
     public class BaseApiController : ControllerBase
     {
-        protected ActionResult HandleResult<T>(T result)
+        protected ActionResult HandleResult<T>(T result, string? action = null)
         {
             if (!result!.Equals(default))
             {
-                return Ok(new Response<T>
+                var response = new Response<T>
                 {
-                    StatusCode = (int)HttpStatusCode.OK,
-                    Message = HttpStatusCode.OK.ToString(),
                     Errors = default,
                     Data = result
-                });
+                };
+
+                switch (action)
+                {
+                    case Applications.Actions.Add:
+                        response.StatusCode = (int)HttpStatusCode.Created;
+                        response.Message = Messages.ADD_SUCCESS;
+                        break;
+                    case Applications.Actions.Update:
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.Message = Messages.UPDATE_SUCCESS;
+                        break;
+                    case Applications.Actions.Delete:
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.Message = Messages.DELETE_SUCCESS;
+                        break;
+                    default:
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.Message = HttpStatusCode.OK.ToString();
+                        break;
+                }
+
+                return Ok(response);
             }
 
             return BadRequest(new Response<T>

@@ -1,9 +1,13 @@
 ﻿using Core;
 using Core.AutoMappers;
+using Core.Services;
 using Data;
 using Domain.Settings;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service;
+using System.Reflection;
 
 namespace API.Extensions
 {
@@ -13,7 +17,11 @@ namespace API.Extensions
         {
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
+            ).AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                options.DisableDataAnnotationsValidation = true;
+            });
 
             services.AddEndpointsApiExplorer();
 
@@ -26,14 +34,14 @@ namespace API.Extensions
                     {
                         Name = "Võ Trung Thường",
                         Email = "trungthuongvo109@gmail.com",
-                        Url = new Uri("https://fb.com/thuong.votrung.5"),
+                        Url = new Uri("https://github.com/SekiroKenjii"),
                     }
                 });
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Description = @"<p>JWT Authorization header using the Bearer scheme.</br>
+                                    Enter 'Bearer' [space] and then your token in the text input below.</br>
+                                    Example: 'Bearer json-web-token'</p>",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -70,6 +78,11 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<ISubBrandService, SubBrandService>();
+            services.AddScoped<IConditionService, ConditionService>();
 
             services.Configure<RouteOptions>(options =>
             {

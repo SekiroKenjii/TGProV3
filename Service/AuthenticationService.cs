@@ -63,14 +63,14 @@ namespace Service
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token!, cookieOptions);
+            _httpContextAccessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token!, cookieOptions);
 
             return CreateAuthenticationResponse(user);
         }
 
         public async Task<AuthenticationResponse> RefreshToken()
         {
-            var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refreshToken"];
+            var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["refreshToken"];
 
             Guid userId = _userAccessor.GetUserId();
 
@@ -123,7 +123,7 @@ namespace Service
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token!, cookieOptions);
+            _httpContextAccessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token!, cookieOptions);
 
             return CreateAuthenticationResponse(user);
         }
