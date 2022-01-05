@@ -9,4 +9,10 @@ namespace Core.DTOs.SubBrand
         public CompactCategoryDto? Category { get; set; }
         public CompactBrandDto? Brand { get; set; }
     }
+
+    public class CompactSubBrandDto : BasePropertiesDto
+    {
+        public CompactCategoryDto? Category { get; set; }
+        public CompactBrandDto? Brand { get; set; }
+    }
 }

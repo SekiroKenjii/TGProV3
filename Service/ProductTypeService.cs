@@ -85,6 +85,15 @@ namespace Service
             return result;
         }
 
+        public async Task<List<CompactProductTypeDto>> GetProductTypesPublic()
+        {
+            var productTypes = await _unitOfWork.ProductTypes.GetAllAsync();
+
+            var result = _mapper.Map<List<CompactProductTypeDto>>(productTypes);
+
+            return result;
+        }
+
         public async Task<bool> UpdateProductType(Guid productTypeId, UpdateProductTypeDto productTypeDto)
         {
             var productType = await _unitOfWork.ProductTypes.GetByIdAsync(productTypeId);

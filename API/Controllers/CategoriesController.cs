@@ -16,6 +16,13 @@ namespace API.Controllers
             _categoryService = categoryService;
         }
 
+        [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetCategoriesPublic()
+        {
+            return HandleResult(await _categoryService.GetCategoriesPublic());
+        }
+
         [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]

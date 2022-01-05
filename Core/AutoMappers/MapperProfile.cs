@@ -31,6 +31,9 @@ namespace Core.AutoMappers
             CreateMap<SubBrand, SubBrandDto>()
                 .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
                 .ForMember(d => d.Brand, o => o.MapFrom(s => s.Brand));
+            CreateMap<SubBrand, CompactSubBrandDto>()
+                .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
+                .ForMember(d => d.Brand, o => o.MapFrom(s => s.Brand));
 
             //Condition
             CreateMap<Condition, ConditionDto>().ReverseMap();

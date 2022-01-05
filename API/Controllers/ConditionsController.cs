@@ -16,6 +16,13 @@ namespace API.Controllers
             _conditionService = conditionService;
         }
 
+        [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetConditionsPublic()
+        {
+            return HandleResult(await _conditionService.GetConditionsPublic());
+        }
+
         [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]

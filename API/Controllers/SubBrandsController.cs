@@ -8,12 +8,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/internal/sub-brands")]
     public class SubBrandsController : BaseApiController
     {
         private readonly ISubBrandService _subBrandService;
         public SubBrandsController(ISubBrandService subBrandService)
         {
             _subBrandService = subBrandService;
+        }
+
+        [HttpGet]
+        [Route("/api/sub-brands")]
+        public async Task<IActionResult> GetSubBrandsPublic()
+        {
+            return HandleResult(await _subBrandService.GetSubBrandsPublic());
         }
 
         [Authorize(Policy = "IsStaff")]

@@ -15,29 +15,18 @@ namespace API.Controllers
             {
                 var response = new Response<T>
                 {
+                    StatusCode = (int)HttpStatusCode.OK,
                     Errors = default,
                     Data = result
                 };
 
-                switch (action)
+                response.Message = action switch
                 {
-                    case Applications.Actions.Add:
-                        response.StatusCode = (int)HttpStatusCode.Created;
-                        response.Message = Messages.ADD_SUCCESS;
-                        break;
-                    case Applications.Actions.Update:
-                        response.StatusCode = (int)HttpStatusCode.OK;
-                        response.Message = Messages.UPDATE_SUCCESS;
-                        break;
-                    case Applications.Actions.Delete:
-                        response.StatusCode = (int)HttpStatusCode.OK;
-                        response.Message = Messages.DELETE_SUCCESS;
-                        break;
-                    default:
-                        response.StatusCode = (int)HttpStatusCode.OK;
-                        response.Message = HttpStatusCode.OK.ToString();
-                        break;
-                }
+                    Applications.Actions.Add => Messages.ADD_SUCCESS,
+                    Applications.Actions.Update => Messages.UPDATE_SUCCESS,
+                    Applications.Actions.Delete => Messages.DELETE_SUCCESS,
+                    _ => HttpStatusCode.OK.ToString()
+                };
 
                 return Ok(response);
             }

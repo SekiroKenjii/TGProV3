@@ -17,6 +17,13 @@ namespace API.Controllers
             _productTypeService = productTypeService;
         }
 
+        [HttpGet]
+        [Route("/api/product-types")]
+        public async Task<IActionResult> GetProductTypesPublic()
+        {
+            return HandleResult(await _productTypeService.GetProductTypesPublic());
+        }
+
         [Authorize(Policy = "IsStaff")]
         [HttpGet]
         [Route("{id}")]

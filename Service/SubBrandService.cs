@@ -89,6 +89,15 @@ namespace Service
             return result;
         }
 
+        public async Task<List<CompactSubBrandDto>> GetSubBrandsPublic()
+        {
+            var subBrands = await _unitOfWork.SubBrands.GetAllAsync(null, new List<string> { "Category", "Brand" });
+
+            var result = _mapper.Map<List<CompactSubBrandDto>>(subBrands);
+
+            return result;
+        }
+
         public async Task<bool> UpdateSubBrand(Guid subBrandId, UpdateSubBrandDto subBrandDto)
         {
             var subBrand = await _unitOfWork.SubBrands.GetByIdAsync(subBrandId);
