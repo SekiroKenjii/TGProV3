@@ -34,6 +34,7 @@ namespace API.Middlewares
 
             var response = new Response<string>
             {
+                Message = exception.Message,
                 Errors = default,
                 Data = default
             };
@@ -42,24 +43,19 @@ namespace API.Middlewares
             {
                 case NotFoundException:
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response.Message = exception.Message;
                     break;
                 case BadRequestException:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response.Message = exception.Message;
                     break;
                 case UnauthorizedException:
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    response.Message = exception.Message;
                     break;
                 case ValidationException e:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response.Message = exception.Message;
                     response.Errors = e.Errors;
                     break;
                 default:
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    response.Message = exception.Message;
                     break;
             }
 

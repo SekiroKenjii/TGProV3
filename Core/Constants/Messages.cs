@@ -16,6 +16,9 @@
         public const string UPDATE_SUCCESS = "Update Requested Resource Successfully";
         public const string DELETE_SUCCESS = "Delete Requested Resource Successfully";
 
+        public const string AUTHENTICATION_REQUIRED = "This resource requires an authenticated user";
+        public const string AUTHORIZATION_REQUIRED = "You are unauthorized to access this resource";
+
         public static string RESOURCE_NOTFOUND(string entity) => $"Requested {entity} Not Found";
     }
 }

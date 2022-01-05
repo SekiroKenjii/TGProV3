@@ -85,6 +85,15 @@ namespace Service
             return result;
         }
 
+        public async Task<List<CompactConditionDto>> GetConditionsPublic()
+        {
+            var conditions = await _unitOfWork.Conditions.GetAllAsync();
+
+            var result = _mapper.Map<List<CompactConditionDto>>(conditions);
+
+            return result;
+        }
+
         public async Task<bool> UpdateCondition(Guid conditionId, UpdateConditionDto conditionDto)
         {
             var condition = await _unitOfWork.Conditions.GetByIdAsync(conditionId);

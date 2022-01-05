@@ -45,7 +45,7 @@ namespace Service
 
         public async Task<AuthenticationResponse> Login(LoginDto loginDto)
         {
-            var user = await _unitOfWork.Users.GetWithExpressionAsync(x => x.Email == loginDto.Email);
+            var user = await _unitOfWork.Users.GetFirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
             if (user == null) throw new NotFoundException(Messages.INCORRECT_EMAIL);
 
@@ -75,7 +75,7 @@ namespace Service
             Guid userId = _userAccessor.GetUserId();
 
             var user = await _unitOfWork.Users
-                .GetWithExpressionAsync(x => x.Id == userId, new List<string> { "UserLoginTokens" });
+                .GetFirstOrDefaultAsync(x => x.Id == userId, new List<string> { "UserLoginTokens" });
 
             if(user == null) throw new UnauthorizedException(Messages.RESOURCE_NOTFOUND("User"));
 
@@ -95,19 +95,26 @@ namespace Service
             user.PasswordHash = passwordResponse.PasswordHash;
             user.PasswordSalt = passwordResponse.PasswordSalt;
 
-            user.Gender = (int)registerDto.Gender >= 0 && (int)registerDto.Gender < 2 ? registerDto.Gender : Gender.Undefined;
+            user.Gender = (int)registerDto.Gender >= 0 && (int)registerDto.Gender <= 2 ? registerDto.Gender : Gender.Undefined;
 
-            if(user.Gender == Gender.Female)
+            switch (user.Gender)
             {
-                user.Avatar = Applications.DEFAUlT_FEMALE_AVATAR;
-                user.AvatarId = Applications.DEFAUlT_FEMALE_AVATAR_ID;
+                case Gender.Female:
+                    user.Avatar = Applications.DEFAUlT_FEMALE_AVATAR;
+                    user.AvatarId = Applications.DEFAUlT_FEMALE_AVATAR_ID;
+                    break;
+                default:
+                    user.Avatar = Applications.DEFAUlT_MALE_AVATAR;
+                    user.AvatarId = Applications.DEFAUlT_MALE_AVATAR_ID;
+                    break;
             }
 
-            if(user.Gender == Gender.Male || user.Gender == Gender.Undefined)
+            var basicRole = await _unitOfWork.Roles.GetFirstOrDefaultAsync(x => x.Name == Domain.Enums.Role.Basic.ToString());
+
+            user.UserRoles!.Add(new UserRole
             {
-                user.Avatar = Applications.DEFAUlT_MALE_AVATAR;
-                user.AvatarId = Applications.DEFAUlT_MALE_AVATAR_ID;
-            }
+                RoleId = basicRole!.Id
+            });
 
             await _unitOfWork.Users.AddAsync(user);
 

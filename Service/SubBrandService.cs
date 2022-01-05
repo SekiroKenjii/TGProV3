@@ -60,7 +60,7 @@ namespace Service
         public async Task<SubBrandDto> GetSubBrand(Guid subBrandId)
         {
             var subBrand = await _unitOfWork.SubBrands
-                .GetWithExpressionAsync(x => x.Id == subBrandId,
+                .GetFirstOrDefaultAsync(x => x.Id == subBrandId,
                 new List<string> { "Category", "Brand" });
 
             if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));
@@ -85,6 +85,15 @@ namespace Service
                 result[i].CreatedInfo = await _userAccessor.GetCreatedInfo(subBrands[i].CreatedAt, subBrands[i].CreatedBy);
                 result[i].LastModifiedInfo = await _userAccessor.GetLastModifiedInfo(subBrands[i].LastModifiedAt, subBrands[i].LastModifiedBy);
             }
+
+            return result;
+        }
+
+        public async Task<List<CompactSubBrandDto>> GetSubBrandsPublic()
+        {
+            var subBrands = await _unitOfWork.SubBrands.GetAllAsync(null, new List<string> { "Category", "Brand" });
+
+            var result = _mapper.Map<List<CompactSubBrandDto>>(subBrands);
 
             return result;
         }

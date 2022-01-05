@@ -3,6 +3,7 @@ using Core.DTOs.Authentication;
 using Core.DTOs.Brand;
 using Core.DTOs.Category;
 using Core.DTOs.Condition;
+using Core.DTOs.ProductType;
 using Core.DTOs.SubBrand;
 using Core.DTOs.User;
 using Domain.Entities;
@@ -30,11 +31,19 @@ namespace Core.AutoMappers
             CreateMap<SubBrand, SubBrandDto>()
                 .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
                 .ForMember(d => d.Brand, o => o.MapFrom(s => s.Brand));
+            CreateMap<SubBrand, CompactSubBrandDto>()
+                .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
+                .ForMember(d => d.Brand, o => o.MapFrom(s => s.Brand));
 
             //Condition
             CreateMap<Condition, ConditionDto>().ReverseMap();
             CreateMap<Condition, CompactConditionDto>().ReverseMap();
             CreateMap<AddConditionDto, Condition>();
+
+            //ProductType
+            CreateMap<ProductType, ProductTypeDto>().ReverseMap();
+            CreateMap<ProductType, CompactProductTypeDto>().ReverseMap();
+            CreateMap<AddProductTypeDto, ProductType>();
         }
     }
 }

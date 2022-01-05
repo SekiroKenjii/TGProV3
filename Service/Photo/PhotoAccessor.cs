@@ -30,24 +30,19 @@ namespace Service.Photo
 
             if (file == null)
             {
-                if (entity == Applications.USER)
+                var result = entity switch
                 {
-                    var result = GetDefaultPhoto(entity, gender);
-                    return new PhotoHandleResult
-                    {
-                        PublicId = result!.DefaultPublicId,
-                        PhotoUrl = result!.DefaultPhotoUrl
-                    };
-                }
-                if (entity == Applications.BRAND || entity == Applications.PRODUCT)
+                    Applications.USER => GetDefaultPhoto(entity, gender),
+                    Applications.BRAND => GetDefaultPhoto(entity),
+                    Applications.PRODUCT => GetDefaultPhoto(entity),
+                    _ => null
+                };
+
+                return new PhotoHandleResult
                 {
-                    var result = GetDefaultPhoto(entity);
-                    return new PhotoHandleResult
-                    {
-                        PublicId = result!.DefaultPublicId,
-                        PhotoUrl = result!.DefaultPhotoUrl
-                    };
-                }
+                    PublicId = result!.DefaultPublicId,
+                    PhotoUrl = result!.DefaultPhotoUrl
+                };
             }
 
             using var stream = file!.OpenReadStream();
@@ -56,21 +51,17 @@ namespace Service.Photo
 
             uploadParams.File = new FileDescription(file.FileName, stream);
 
-            if(entity == Applications.USER || entity == Applications.BRAND)
+            uploadParams.Transformation = entity switch
             {
-                uploadParams.Transformation = new Transformation().Height(500).Crop("fill");
-            }
-            if (entity == Applications.PRODUCT)
-            {
-                uploadParams.Transformation = new Transformation().Height(800).Width(800).Crop("fill");
-            }
+                Applications.USER => new Transformation().Height(500).Crop("fill"),
+                Applications.BRAND => new Transformation().Height(500).Crop("fill"),
+                Applications.PRODUCT => new Transformation().Height(800).Width(800).Crop("fill"),
+                _ => new Transformation().Height(500).Crop("fill")
+            };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            if (uploadResult.Error != null)
-            {
-                throw new Exception(uploadResult.Error.Message);
-            }
+            if (uploadResult.Error != null) throw new Exception(uploadResult.Error.Message);
 
             return new PhotoHandleResult
             {
@@ -88,40 +79,35 @@ namespace Service.Photo
 
         private static DefaultPhoto? GetDefaultPhoto(string entity, string? gender = null)
         {
-            if(entity == Applications.USER)
+            switch (entity)
             {
-                if (gender == Gender.Female.ToString())
-                {
+                case Applications.USER:
+                    if (gender == Gender.Female.ToString())
+                    {
+                        return new DefaultPhoto
+                        {
+                            DefaultPhotoUrl = Applications.DEFAUlT_FEMALE_AVATAR,
+                            DefaultPublicId = Applications.DEFAUlT_FEMALE_AVATAR_ID
+                        };
+                    }
+
                     return new DefaultPhoto
                     {
-                        DefaultPhotoUrl = Applications.DEFAUlT_FEMALE_AVATAR,
-                        DefaultPublicId = Applications.DEFAUlT_FEMALE_AVATAR_ID
+                        DefaultPhotoUrl = Applications.DEFAUlT_MALE_AVATAR,
+                        DefaultPublicId = Applications.DEFAUlT_MALE_AVATAR_ID
                     };
-                }
-
-                return new DefaultPhoto
-                {
-                    DefaultPhotoUrl = Applications.DEFAUlT_MALE_AVATAR,
-                    DefaultPublicId = Applications.DEFAUlT_MALE_AVATAR_ID
-                };
-            }
-
-            if (entity == Applications.BRAND)
-            {
-                return new DefaultPhoto
-                {
-                    DefaultPhotoUrl = Applications.DEFAUlT_BRAND_PHOTO,
-                    DefaultPublicId = Applications.DEFAUlT_BRAND_PHOTO_ID
-                };
-            }
-
-            if (entity == Applications.PRODUCT)
-            {
-                return new DefaultPhoto
-                {
-                    DefaultPhotoUrl = Applications.DEFAUlT_PRODUCT_PHOTO,
-                    DefaultPublicId = Applications.DEFAUlT_PRODUCT_PHOTO_ID
-                };
+                case Applications.BRAND:
+                    return new DefaultPhoto
+                    {
+                        DefaultPhotoUrl = Applications.DEFAUlT_BRAND_PHOTO,
+                        DefaultPublicId = Applications.DEFAUlT_BRAND_PHOTO_ID
+                    };
+                case Applications.PRODUCT:
+                    return new DefaultPhoto
+                    {
+                        DefaultPhotoUrl = Applications.DEFAUlT_PRODUCT_PHOTO,
+                        DefaultPublicId = Applications.DEFAUlT_PRODUCT_PHOTO_ID
+                    };
             }
 
             return null;

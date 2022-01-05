@@ -70,6 +70,15 @@ namespace Service
             return result;
         }
 
+        public async Task<List<CompactCategoryDto>> GetCategoriesPublic()
+        {
+            var categories = await _unitOfWork.Categories.GetAllAsync();
+
+            var result = _mapper.Map<List<CompactCategoryDto>>(categories);
+
+            return result;
+        }
+
         public async Task<CategoryDto> GetCategory(Guid categoryId)
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);

@@ -17,19 +17,28 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetCategoriesPublic()
+        {
+            return HandleResult(await _categoryService.GetCategoriesPublic());
+        }
+
+        [Authorize(Policy = "IsStaff")]
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetCategory(Guid id)
         {
             return HandleResult(await _categoryService.GetCategory(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
             return HandleResult(await _categoryService.GetCategories());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] AddCategoryDto categoryDto)
         {
@@ -42,7 +51,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.AddCategory(categoryDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto categoryDto)
@@ -56,7 +65,7 @@ namespace API.Controllers
             return HandleResult(await _categoryService.UpdateCategory(id, categoryDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)

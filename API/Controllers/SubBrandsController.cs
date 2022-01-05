@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/internal/sub-brands")]
     public class SubBrandsController : BaseApiController
     {
         private readonly ISubBrandService _subBrandService;
@@ -17,19 +18,28 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("/api/sub-brands")]
+        public async Task<IActionResult> GetSubBrandsPublic()
+        {
+            return HandleResult(await _subBrandService.GetSubBrandsPublic());
+        }
+
+        [Authorize(Policy = "IsStaff")]
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSubBrand(Guid id)
         {
             return HandleResult(await _subBrandService.GetSubBrand(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetSubBrands()
         {
             return HandleResult(await _subBrandService.GetSubBrands());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddSubBrand([FromBody] AddSubBrandDto subBrandDto)
         {
@@ -42,7 +52,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.AddSubBrand(subBrandDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateSubBrand(Guid id, [FromBody] UpdateSubBrandDto subBrandDto)
@@ -56,7 +66,7 @@ namespace API.Controllers
             return HandleResult(await _subBrandService.UpdateSubBrand(id, subBrandDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteSubBrand(Guid id)

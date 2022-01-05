@@ -1,22 +1,16 @@
 using API.Extensions;
 using API.Middlewares;
-using Data;
-using Domain.Settings;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
 
-// Add services to the container.
 builder.Services.AddApplicationServices(config);
 
 builder.Services.AddAuthenticationServices(config);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options => options.RouteTemplate = "swagger/{documentName}/swagger.json");
@@ -29,27 +23,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseMiddleware<HandleUnauthorizedMiddleware>();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-using var scope = app.Services.CreateScope();
-
-var services = scope.ServiceProvider;
-
-try
-{
-    var context = services.GetRequiredService<DataContext>();
-    var defaultCredential = services.GetRequiredService<IOptions<DefaultCredential>>();
-    await context.Database.MigrateAsync();
-    await SeedData.Execute(context, defaultCredential.Value);
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occured during migration");
-}
+await app.MigrateDBAsync();
 
 await app.RunAsync();

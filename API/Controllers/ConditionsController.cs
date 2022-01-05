@@ -17,19 +17,28 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetConditionsPublic()
+        {
+            return HandleResult(await _conditionService.GetConditionsPublic());
+        }
+
+        [Authorize(Policy = "IsStaff")]
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetCondition(Guid id)
         {
             return HandleResult(await _conditionService.GetCondition(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetConditions()
         {
             return HandleResult(await _conditionService.GetConditions());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddCondition([FromBody] AddConditionDto conditionDto)
         {
@@ -42,7 +51,7 @@ namespace API.Controllers
             return HandleResult(await _conditionService.AddCondition(conditionDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateCondition(Guid id, [FromBody] UpdateConditionDto conditionDto)
@@ -56,7 +65,7 @@ namespace API.Controllers
             return HandleResult(await _conditionService.UpdateCondition(id, conditionDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteCondition(Guid id)

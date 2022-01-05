@@ -17,19 +17,28 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("/api/[controller]")]
+        public async Task<IActionResult> GetBrandsPublic()
+        {
+            return HandleResult(await _brandService.GetBrandsPublic());
+        }
+
+        [Authorize(Policy = "IsStaff")]
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetBrand(Guid id)
         {
             return HandleResult(await _brandService.GetBrand(id));
         }
 
+        [Authorize(Policy = "IsStaff")]
         [HttpGet]
         public async Task<IActionResult> GetBrands()
         {
             return HandleResult(await _brandService.GetBrands());
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPost]
         public async Task<IActionResult> AddBrand([FromForm] AddBrandDto brandDto)
         {
@@ -42,7 +51,7 @@ namespace API.Controllers
             return HandleResult(await _brandService.AddBrand(brandDto), Applications.Actions.Add);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateBrand(Guid id, [FromForm] UpdateBrandDto brandDto)
@@ -56,7 +65,7 @@ namespace API.Controllers
             return HandleResult(await _brandService.UpdateBrand(id, brandDto), Applications.Actions.Update);
         }
 
-        [Authorize]
+        [Authorize(Policy = "IsModerator")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteBrand(Guid id)
