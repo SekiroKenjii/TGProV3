@@ -10,6 +10,7 @@ using Core.Services;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -74,8 +75,8 @@ namespace Service
 
             Guid userId = _userAccessor.GetUserId();
 
-            var user = await _unitOfWork.Users
-                .GetFirstOrDefaultAsync(x => x.Id == userId, new List<string> { "UserLoginTokens" });
+            var user = await _unitOfWork.Users.GetIQueryable()
+                .Include(x => x.UserLoginTokens).FirstOrDefaultAsync(x => x.Id == userId);
 
             if(user == null) throw new UnauthorizedException(Messages.RESOURCE_NOTFOUND("User"));
 

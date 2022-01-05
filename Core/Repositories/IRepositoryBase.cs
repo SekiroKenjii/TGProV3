@@ -5,9 +5,9 @@ namespace Core.Repositories
     public interface IRepositoryBase<T> where T : class
     {
         Task<T?> GetByIdAsync(Guid id);
-        Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression, List<string>? includes = null);
-        Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null);
-        IQueryable<T> GetAllIQueryable();
+        Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression);
+        Task<IReadOnlyList<T>> GetAllAsync();
+        IQueryable<T> GetIQueryable();
         Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize);
         Task AddAsync(T entity);
         void Update(T entity);

@@ -6,6 +6,7 @@ using Core.DTOs.SubBrand;
 using Core.Exceptions;
 using Core.Services;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -59,9 +60,8 @@ namespace Service
 
         public async Task<SubBrandDto> GetSubBrand(Guid subBrandId)
         {
-            var subBrand = await _unitOfWork.SubBrands
-                .GetFirstOrDefaultAsync(x => x.Id == subBrandId,
-                new List<string> { "Category", "Brand" });
+            var subBrand = await _unitOfWork.SubBrands.GetIQueryable()
+                .Include(x => x.Category).Include(x => x.Brand).FirstOrDefaultAsync(x => x.Id == subBrandId);
 
             if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));
 
@@ -76,7 +76,8 @@ namespace Service
 
         public async Task<List<SubBrandDto>> GetSubBrands()
         {
-            var subBrands = await _unitOfWork.SubBrands.GetAllAsync(null, new List<string> { "Category", "Brand" });
+            var subBrands = await _unitOfWork.SubBrands.GetIQueryable()
+                .Include(x => x.Category).Include(x => x.Brand).ToListAsync();
 
             var result = _mapper.Map<List<SubBrandDto>>(subBrands);
 
@@ -91,7 +92,8 @@ namespace Service
 
         public async Task<List<CompactSubBrandDto>> GetSubBrandsPublic()
         {
-            var subBrands = await _unitOfWork.SubBrands.GetAllAsync(null, new List<string> { "Category", "Brand" });
+            var subBrands = await _unitOfWork.SubBrands.GetIQueryable()
+                .Include(x => x.Category).Include(x => x.Brand).ToListAsync();
 
             var result = _mapper.Map<List<CompactSubBrandDto>>(subBrands);
 

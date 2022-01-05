@@ -26,7 +26,7 @@ namespace Domain.Entities
         public Guid? ProductTypeId { get; set; }
         public virtual ProductType? ProductType { get; set; }
 
-        public virtual ICollection<ProductPhoto>? ProductPhotos { get; set; }
+        public virtual ICollection<ProductPhoto>? ProductPhotos { get; set; } = new List<ProductPhoto>();
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
         public virtual ICollection<ShoppingCart>? ShoppingCarts { get; set; }
         public virtual ICollection<WishList>? WishLists { get; set; }
