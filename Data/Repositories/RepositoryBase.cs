@@ -24,27 +24,14 @@ namespace Data.Repositories
             _db.Remove(entity);
         }
 
-        public async Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, List<string>? includes = null)
+        public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             IQueryable<T> query = _db;
-
-            if (expression != null)
-            {
-                query = query.Where(expression);
-            }
-
-            if (includes != null)
-            {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
 
             return await query.ToListAsync();
         }
 
-        public IQueryable<T> GetAllIQueryable()
+        public IQueryable<T> GetIQueryable()
         {
             return _db;
         }
@@ -59,17 +46,9 @@ namespace Data.Repositories
             return await _db.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsNoTracking().ToListAsync();
         }
 
-        public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression, List<string>? includes = null)
+        public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression)
         {
             IQueryable<T> query = _db;
-
-            if (includes != null)
-            {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
 
             return await query.FirstOrDefaultAsync(expression);
         }
