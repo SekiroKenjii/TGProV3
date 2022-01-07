@@ -31,7 +31,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.ADD_FAILURE);
+            if (!isSaved) throw new Exception(Errors.ADD_FAILURE);
 
             var result = _mapper.Map<ConditionDto>(condition);
 
@@ -46,20 +46,20 @@ namespace Service
         {
             var condition = await _unitOfWork.Conditions.GetByIdAsync(conditionId);
 
-            if (condition == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Condition"));
+            if (condition == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Condition"));
 
             _unitOfWork.Conditions.Delete(condition);
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.DELETE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.DELETE_FAILURE) : true;
         }
 
         public async Task<ConditionDto> GetCondition(Guid conditionId)
         {
             var condition = await _unitOfWork.Conditions.GetByIdAsync(conditionId);
 
-            if (condition == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Condition"));
+            if (condition == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Condition"));
 
             var result = _mapper.Map<ConditionDto>(condition);
 
@@ -98,7 +98,7 @@ namespace Service
         {
             var condition = await _unitOfWork.Conditions.GetByIdAsync(conditionId);
 
-            if (condition == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Condition"));
+            if (condition == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Condition"));
 
             condition.Name = conditionDto.Name;
             condition.Description = conditionDto.Description;
@@ -109,7 +109,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.UPDATE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }

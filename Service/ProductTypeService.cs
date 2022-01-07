@@ -31,7 +31,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.ADD_FAILURE);
+            if (!isSaved) throw new Exception(Errors.ADD_FAILURE);
 
             var result = _mapper.Map<ProductTypeDto>(productType);
 
@@ -46,20 +46,20 @@ namespace Service
         {
             var productType = await _unitOfWork.ProductTypes.GetByIdAsync(productTypeId);
 
-            if (productType == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Product Type"));
+            if (productType == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Type"));
 
             _unitOfWork.ProductTypes.Delete(productType);
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.DELETE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.DELETE_FAILURE) : true;
         }
 
         public async Task<ProductTypeDto> GetProductType(Guid productTypeId)
         {
             var productType = await _unitOfWork.ProductTypes.GetByIdAsync(productTypeId);
 
-            if (productType == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Product Type"));
+            if (productType == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Type"));
 
             var result = _mapper.Map<ProductTypeDto>(productType);
 
@@ -98,7 +98,7 @@ namespace Service
         {
             var productType = await _unitOfWork.ProductTypes.GetByIdAsync(productTypeId);
 
-            if (productType == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Product Type"));
+            if (productType == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Type"));
 
             productType.Name = productTypeDto.Name;
             productType.Description = productTypeDto.Description;
@@ -109,7 +109,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.UPDATE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }

@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseMiddleware<HandleUnauthorizedMiddleware>();
+app.UseMiddleware<HandleIdentificationFailedMiddleware>();
 
 app.UseAuthentication();
 

@@ -32,7 +32,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.ADD_FAILURE);
+            if (!isSaved) throw new Exception(Errors.ADD_FAILURE);
 
             var result = _mapper.Map<SubBrandDto>(subBrand);
 
@@ -47,13 +47,13 @@ namespace Service
         {
             var subBrand = await _unitOfWork.SubBrands.GetByIdAsync(subBrandId);
 
-            if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));
+            if (subBrand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("SubBrand"));
 
             _unitOfWork.SubBrands.Delete(subBrand);
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.DELETE_FAILURE);
+            if (!isSaved) throw new Exception(Errors.DELETE_FAILURE);
 
             return true;
         }
@@ -63,7 +63,7 @@ namespace Service
             var subBrand = await _unitOfWork.SubBrands.GetIQueryable()
                 .Include(x => x.Category).Include(x => x.Brand).FirstOrDefaultAsync(x => x.Id == subBrandId);
 
-            if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));
+            if (subBrand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("SubBrand"));
 
             var result = _mapper.Map<SubBrandDto>(subBrand);
 
@@ -104,7 +104,7 @@ namespace Service
         {
             var subBrand = await _unitOfWork.SubBrands.GetByIdAsync(subBrandId);
 
-            if (subBrand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("SubBrand"));
+            if (subBrand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("SubBrand"));
 
             subBrand.Name = subBrandDto.Name;
             subBrand.Description = subBrandDto.Description;
@@ -117,7 +117,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.UPDATE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }

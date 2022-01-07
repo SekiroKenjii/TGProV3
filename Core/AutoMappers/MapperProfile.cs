@@ -51,13 +51,19 @@ namespace Core.AutoMappers
                 .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
                 .ForMember(d => d.Condition, o => o.MapFrom(s => s.Condition))
                 .ForMember(d => d.SubBrand, o => o.MapFrom(s => s.SubBrand))
-                .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType));
+                .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType))
+                .ForMember(d => d.ProductPhotos, o => o.MapFrom(s => s.ProductPhotos));
             CreateMap<Product, CompactProductDto>()
                 .ForMember(d => d.Category, o => o.MapFrom(s => s.Category))
                 .ForMember(d => d.Condition, o => o.MapFrom(s => s.Condition))
                 .ForMember(d => d.SubBrand, o => o.MapFrom(s => s.SubBrand))
-                .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType));
+                .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType))
+                .ForMember(d => d.ProductPhotos, o => o.MapFrom(s => s.ProductPhotos));
             CreateMap<AddProductDto, Product>();
+
+            //ProductPhoto
+            CreateMap<ProductPhoto, ProductPhotoDto>().ReverseMap();
+            CreateMap<ProductPhoto, CompactProductPhotoDto>();
         }
     }
 }

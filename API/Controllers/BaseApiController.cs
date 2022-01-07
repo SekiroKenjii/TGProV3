@@ -22,9 +22,9 @@ namespace API.Controllers
 
                 response.Message = action switch
                 {
-                    Applications.Actions.Add => Messages.ADD_SUCCESS,
-                    Applications.Actions.Update => Messages.UPDATE_SUCCESS,
-                    Applications.Actions.Delete => Messages.DELETE_SUCCESS,
+                    Applications.Actions.Add => Errors.ADD_SUCCESS,
+                    Applications.Actions.Update => Errors.UPDATE_SUCCESS,
+                    Applications.Actions.Delete => Errors.DELETE_SUCCESS,
                     _ => HttpStatusCode.OK.ToString()
                 };
 

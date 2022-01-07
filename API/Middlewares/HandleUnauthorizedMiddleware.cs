@@ -5,10 +5,10 @@ using System.Text.Json;
 
 namespace API.Middlewares
 {
-    public class HandleUnauthorizedMiddleware
+    public class HandleIdentificationFailedMiddleware
     {
         private readonly RequestDelegate _next;
-        public HandleUnauthorizedMiddleware(RequestDelegate next)
+        public HandleIdentificationFailedMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -31,9 +31,9 @@ namespace API.Middlewares
 
                 response.Message = context.Response.StatusCode switch
                 {
-                    (int)HttpStatusCode.Unauthorized => Messages.AUTHENTICATION_REQUIRED,
-                    (int)HttpStatusCode.Forbidden => Messages.AUTHORIZATION_REQUIRED,
-                    _ => Messages.AUTHENTICATION_REQUIRED
+                    (int)HttpStatusCode.Unauthorized => Errors.AUTHENTICATION_REQUIRED,
+                    (int)HttpStatusCode.Forbidden => Errors.AUTHORIZATION_REQUIRED,
+                    _ => Errors.AUTHENTICATION_REQUIRED
                 };
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
