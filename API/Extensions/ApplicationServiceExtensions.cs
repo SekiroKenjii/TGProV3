@@ -85,6 +85,7 @@ namespace API.Extensions
             services.AddScoped<IConditionService, ConditionService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductPhotoService, ProductPhotoService>();
 
             services.Configure<RouteOptions>(options =>
             {
