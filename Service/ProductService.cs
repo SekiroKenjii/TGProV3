@@ -85,7 +85,7 @@ namespace Service
 
         public async Task<List<ProductDto>> GetProducts()
         {
-            var products = await _unitOfWork.Products.GetIQueryable()
+            var products = await _unitOfWork.Products.GetIQueryable().Include(x => x.ProductPhotos)
                 .Include(x => x.Category).Include(x => x.Condition).Include(x => x.ProductType)
                 .Include(x => x.SubBrand).ThenInclude(s => s!.Brand).ToListAsync();
 
@@ -93,6 +93,26 @@ namespace Service
 
             for (int i = 0; i < products.Count; i++)
             {
+                result[i].Category!.CreatedInfo =
+                    await _userAccessor.GetCreatedInfo(products[i].Category!.CreatedAt, products[i].Category!.CreatedBy);
+                result[i].Category!.LastModifiedInfo =
+                    await _userAccessor.GetLastModifiedInfo(products[i].Category!.LastModifiedAt, products[i].Category!.LastModifiedBy);
+
+                result[i].Condition!.CreatedInfo =
+                    await _userAccessor.GetCreatedInfo(products[i].Condition!.CreatedAt, products[i].Condition!.CreatedBy);
+                result[i].Condition!.LastModifiedInfo =
+                    await _userAccessor.GetLastModifiedInfo(products[i].Condition!.LastModifiedAt, products[i].Condition!.LastModifiedBy);
+
+                result[i].SubBrand!.CreatedInfo =
+                    await _userAccessor.GetCreatedInfo(products[i].SubBrand!.CreatedAt, products[i].SubBrand!.CreatedBy);
+                result[i].SubBrand!.LastModifiedInfo =
+                    await _userAccessor.GetLastModifiedInfo(products[i].SubBrand!.LastModifiedAt, products[i].SubBrand!.LastModifiedBy);
+
+                result[i].ProductType!.CreatedInfo =
+                    await _userAccessor.GetCreatedInfo(products[i].ProductType!.CreatedAt, products[i].ProductType!.CreatedBy);
+                result[i].ProductType!.LastModifiedInfo =
+                    await _userAccessor.GetLastModifiedInfo(products[i].ProductType!.LastModifiedAt, products[i].ProductType!.LastModifiedBy);
+
                 result[i].CreatedInfo = await _userAccessor.GetCreatedInfo(products[i].CreatedAt, products[i].CreatedBy);
                 result[i].LastModifiedInfo = await _userAccessor.GetLastModifiedInfo(products[i].LastModifiedAt, products[i].LastModifiedBy);
 
@@ -112,7 +132,7 @@ namespace Service
 
         public async Task<List<CompactProductDto>> GetProductsPublic()
         {
-            var products = await _unitOfWork.Products.GetIQueryable()
+            var products = await _unitOfWork.Products.GetIQueryable().Include(x => x.ProductPhotos)
                 .Include(x => x.Category).Include(x => x.Condition).Include(x => x.ProductType)
                 .Include(x => x.SubBrand).ThenInclude(s => s!.Brand).ToListAsync();
 

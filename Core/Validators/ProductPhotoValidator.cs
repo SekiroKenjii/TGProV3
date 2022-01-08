@@ -3,11 +3,20 @@ using FluentValidation;
 
 namespace Core.Validators
 {
-    public class ProductPhotoValidator : AbstractValidator<UpdateProductPhotoDto>
+    public class AddProductPhotosValidator : AbstractValidator<AddProductPhotosDto>
     {
-        public ProductPhotoValidator()
+        public AddProductPhotosValidator()
         {
-            RuleFor(p => p.Photo).NotNull();
+            RuleFor(p => p.ProductId).NotEmpty();
+            RuleFor(p => p.Photos).NotEmpty();
+        }
+    }
+
+    public class UpdateProductPhotoValidator : AbstractValidator<UpdateProductPhotoDto>
+    {
+        public UpdateProductPhotoValidator()
+        {
+            RuleFor(p => p.Photo).NotEmpty();
         }
     }
 }

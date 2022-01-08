@@ -4,7 +4,9 @@ using Core.Accessors;
 using Core.Constants;
 using Core.DTOs.Product;
 using Core.Exceptions;
+using Core.Helpers;
 using Core.Services;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -24,9 +26,64 @@ namespace Service
             _photoAccessor = photoAccessor;
         }
 
-        public async Task<List<ProductPhotoDto>> AddProductPhotos(AddProductPhotosDto producPhotoDto)
+        public async Task<bool> AddProductPhotos(AddProductPhotosDto producPhotoDto)
         {
-            throw new NotImplementedException();
+            var product = await _unitOfWork.Products.GetByIdAsync(producPhotoDto.ProductId);
+
+            var productPhotos = await _unitOfWork.ProductPhotos.GetIQueryable()
+                .Where(x => x.ProductId == producPhotoDto.ProductId).ToListAsync();
+
+            if(product == null || productPhotos.Count == 0)
+                throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Or Product Photo"));
+
+            bool isSaved = false;
+
+            if (productPhotos.Count == 1 && productPhotos[0].ProductPhotoId == Applications.DEFAUlT_PRODUCT_PHOTO_ID)
+            {
+                _unitOfWork.ProductPhotos.Delete(productPhotos[0]);
+
+                for (int i = 0; i < producPhotoDto.Photos!.Count; i++)
+                {
+                    var uploadProductPhoto = await _photoAccessor.AddPhoto(producPhotoDto.Photos[i], Applications.PRODUCT);
+
+                    int sortOrder = i + 1;
+
+                    product.ProductPhotos!.Add(new ProductPhoto
+                    {
+                        ProductPhotoUrl = uploadProductPhoto.PhotoUrl,
+                        ProductPhotoId = uploadProductPhoto.PublicId,
+                        Caption = product.Name!.GeneratePhotoCaption(sortOrder),
+                        SortOrder = sortOrder
+                    });
+
+                    _unitOfWork.Products.Update(product);
+                }
+
+                isSaved = await _unitOfWork.SaveChangeAsync() > 0;
+
+                return !isSaved ? throw new Exception(Errors.ADD_FAILURE) : true;
+            }
+
+            for (int i = 0; i < producPhotoDto.Photos!.Count; i++)
+            {
+                var uploadProductPhoto = await _photoAccessor.AddPhoto(producPhotoDto.Photos[i], Applications.PRODUCT);
+
+                int sortOrder = productPhotos[^1].SortOrder + i + 1;
+
+                product.ProductPhotos!.Add(new ProductPhoto
+                {
+                    ProductPhotoUrl = uploadProductPhoto.PhotoUrl,
+                    ProductPhotoId = uploadProductPhoto.PublicId,
+                    Caption = product.Name!.GeneratePhotoCaption(sortOrder),
+                    SortOrder = sortOrder
+                });
+
+                _unitOfWork.Products.Update(product);
+            }
+
+            isSaved = await _unitOfWork.SaveChangeAsync() > 0;
+
+            return !isSaved ? throw new Exception(Errors.ADD_FAILURE) : true;
         }
 
         public async Task<bool> DeleteProductPhoto(Guid productPhotoId)
@@ -36,9 +93,7 @@ namespace Service
             if (productPhoto == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Photo"));
 
             if (productPhoto.ProductPhotoId == Applications.DEFAUlT_PRODUCT_PHOTO_ID)
-            {
                 throw new BadRequestException("You can not delete default product photo");
-            }
 
             var deleteProductPhoto = await _photoAccessor.DeletePhoto(productPhoto.ProductPhotoId!);
 
@@ -69,12 +124,27 @@ namespace Service
 
         public async Task<bool> UpdateProductPhoto(Guid productPhotoId, UpdateProductPhotoDto producPhotoDto)
         {
-            throw new NotImplementedException();
-        }
+            var productPhoto = await _unitOfWork.ProductPhotos.GetByIdAsync(productPhotoId);
 
-        public async Task<List<ProductPhotoDto>> UpdateProductPhotos(UpdateProductPhotosDto producPhotoDto)
-        {
-            throw new NotImplementedException();
+            if (productPhoto == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Product Photo"));
+
+            if (productPhoto.ProductPhotoId != Applications.DEFAUlT_PRODUCT_PHOTO_ID)
+            {
+                var deleteProductPhoto = await _photoAccessor.DeletePhoto(productPhoto.ProductPhotoId!);
+
+                if (deleteProductPhoto != "ok") throw new Exception(deleteProductPhoto);
+            }
+
+            var uploadProductPhoto = await _photoAccessor.AddPhoto(producPhotoDto.Photo!, Applications.PRODUCT);
+
+            productPhoto.ProductPhotoId = uploadProductPhoto.PublicId;
+            productPhoto.ProductPhotoUrl = uploadProductPhoto.PhotoUrl;
+
+            _unitOfWork.ProductPhotos.Update(productPhoto);
+
+            bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
+
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }
