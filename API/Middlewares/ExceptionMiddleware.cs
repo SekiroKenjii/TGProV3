@@ -34,28 +34,36 @@ namespace API.Middlewares
 
             var response = new Response<string>
             {
-                Message = exception.Message,
-                Errors = default,
+                Errors = new List<string>(),
                 Data = default
             };
 
             switch (exception)
             {
-                case NotFoundException:
+                case NotFoundException notFound:
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    response.Message = HttpStatusCode.NotFound.ToString();
+                    response.Errors = notFound.Errors;
                     break;
-                case BadRequestException:
+                case BadRequestException badRequest:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    response.Message = HttpStatusCode.BadRequest.ToString();
+                    response.Errors = badRequest.Errors;
                     break;
-                case UnauthorizedException:
+                case UnauthorizedException unauthorized:
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    response.Message = HttpStatusCode.Unauthorized.ToString();
+                    response.Errors = unauthorized.Errors;
                     break;
-                case ValidationException e:
+                case ValidationException validation:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response.Errors = e.Errors;
+                    response.Message = HttpStatusCode.BadRequest.ToString();
+                    response.Errors = validation.Errors;
                     break;
                 default:
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    response.Message = HttpStatusCode.InternalServerError.ToString();
+                    response.Errors.Append(exception.Message);
                     break;
             }
 

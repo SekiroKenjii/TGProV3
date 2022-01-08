@@ -1,9 +1,12 @@
 ﻿namespace Core.Constants
 {
-    public static class Messages
+    public static class Errors
     {
         public const string INCORRECT_EMAIL = "Email Is Incorrect";
         public const string INCORRECT_PASSWORD = "Password Is Incorrect";
+
+        public const string INCORRECT_LOGIN_INFO = "Login Information Is Incorrect";
+
         public const string REVOKED_TOKEN = "Token Has Been Revoked";
         public const string USER_NOT_ACTIVE = "User Has Not Activated";
         public const string LOCKED_USER = "User Has Been Locked";

@@ -31,7 +31,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.ADD_FAILURE);
+            if (!isSaved) throw new Exception(Errors.ADD_FAILURE);
 
             var result = _mapper.Map<CategoryDto>(category);
 
@@ -46,13 +46,13 @@ namespace Service
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
 
-            if (category == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Category"));
+            if (category == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Category"));
 
             _unitOfWork.Categories.Delete(category);
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.DELETE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.DELETE_FAILURE) : true;
         }
 
         public async Task<List<CategoryDto>> GetCategories()
@@ -83,7 +83,7 @@ namespace Service
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
 
-            if (category == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Category"));
+            if (category == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Category"));
 
             var result = _mapper.Map<CategoryDto>(category);
 
@@ -98,7 +98,7 @@ namespace Service
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
 
-            if (category == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Category"));
+            if (category == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Category"));
 
             category.Name = categoryDto.Name;
             category.Description = categoryDto.Description;
@@ -109,7 +109,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.UPDATE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }

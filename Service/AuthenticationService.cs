@@ -37,7 +37,7 @@ namespace Service
 
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
 
-            if (user == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("User"));
+            if (user == null) throw new UnauthorizedException(Errors.RESOURCE_NOTFOUND("User"));
 
             var result = _mapper.Map<UserDto>(user);
 
@@ -48,13 +48,13 @@ namespace Service
         {
             var user = await _unitOfWork.Users.GetFirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
-            if (user == null) throw new NotFoundException(Messages.INCORRECT_EMAIL);
+            if (user == null) throw new UnauthorizedException(Errors.INCORRECT_LOGIN_INFO, Errors.INCORRECT_EMAIL);
 
-            if (user.IsBlocked) throw new UnauthorizedException(Messages.LOCKED_USER);
+            if (user.IsBlocked) throw new UnauthorizedException(Errors.LOCKED_USER);
 
             var loginResult = PasswordHelper.ValidatePassword(loginDto.Password!, user.PasswordHash!, user.PasswordSalt!);
 
-            if(!loginResult) throw new UnauthorizedException(Messages.INCORRECT_PASSWORD);
+            if(!loginResult) throw new UnauthorizedException(Errors.INCORRECT_LOGIN_INFO, Errors.INCORRECT_PASSWORD);
 
             var refreshToken = await CreateRefreshToken(user, loginDto.Remember);
 
@@ -78,11 +78,11 @@ namespace Service
             var user = await _unitOfWork.Users.GetIQueryable()
                 .Include(x => x.UserLoginTokens).FirstOrDefaultAsync(x => x.Id == userId);
 
-            if(user == null) throw new UnauthorizedException(Messages.RESOURCE_NOTFOUND("User"));
+            if(user == null) throw new UnauthorizedException(Errors.RESOURCE_NOTFOUND("User"));
 
             var oldToken = user.UserLoginTokens!.SingleOrDefault(x => x.Token == refreshToken);
 
-            if (oldToken != null && !oldToken.IsActive) throw new UnauthorizedException(Messages.REVOKED_TOKEN);
+            if (oldToken != null && !oldToken.IsActive) throw new UnauthorizedException(Errors.REVOKED_TOKEN);
 
             return CreateAuthenticationResponse(user);
         }
@@ -121,7 +121,7 @@ namespace Service
 
             var result = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!result) throw new BadRequestException();
+            if (!result) throw new BadRequestException(Errors.ADD_FAILURE);
 
             var refreshToken = await CreateRefreshToken(user);
 

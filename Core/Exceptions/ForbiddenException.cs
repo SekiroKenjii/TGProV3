@@ -1,13 +1,13 @@
 ﻿namespace Core.Exceptions
 {
-    public class NotFoundException : Exception
+    public class ForbiddenException : Exception
     {
-        public NotFoundException() : base()
+        public ForbiddenException() : base()
         {
             Errors = new List<string>();
         }
         public List<string> Errors { get; }
-        public NotFoundException(params string[] errors)
+        public ForbiddenException(params string[] errors)
             : this()
         {
             foreach (var error in errors)

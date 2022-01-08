@@ -39,7 +39,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.ADD_FAILURE);
+            if (!isSaved) throw new Exception(Errors.ADD_FAILURE);
 
             var result = _mapper.Map<BrandDto>(brand);
 
@@ -54,13 +54,13 @@ namespace Service
         {
             var brand = await _unitOfWork.Brands.GetByIdAsync(brandId);
 
-            if (brand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Brand"));
+            if (brand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Brand"));
 
             _unitOfWork.Brands.Delete(brand);
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            if (!isSaved) throw new BadRequestException(Messages.DELETE_FAILURE);
+            if (!isSaved) throw new Exception(Errors.DELETE_FAILURE);
 
             if (brand.LogoId != Applications.DEFAUlT_BRAND_PHOTO_ID)
             {
@@ -74,7 +74,7 @@ namespace Service
         {
             var brand = await _unitOfWork.Brands.GetByIdAsync(brandId);
 
-            if (brand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Brand"));
+            if (brand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Brand"));
 
             var result = _mapper.Map<BrandDto>(brand);
 
@@ -113,7 +113,7 @@ namespace Service
         {
             var brand = await _unitOfWork.Brands.GetByIdAsync(brandId);
 
-            if (brand == null) throw new NotFoundException(Messages.RESOURCE_NOTFOUND("Brand"));
+            if (brand == null) throw new NotFoundException(Errors.RESOURCE_NOTFOUND("Brand"));
 
             brand.Name = brandDto.Name;
             brand.Description = brandDto.Description;
@@ -138,7 +138,7 @@ namespace Service
 
             bool isSaved = await _unitOfWork.SaveChangeAsync() > 0;
 
-            return !isSaved ? throw new BadRequestException(Messages.UPDATE_FAILURE) : true;
+            return !isSaved ? throw new Exception(Errors.UPDATE_FAILURE) : true;
         }
     }
 }

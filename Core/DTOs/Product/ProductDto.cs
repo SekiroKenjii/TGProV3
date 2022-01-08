@@ -19,7 +19,7 @@ namespace Core.DTOs.Product
         public ConditionDto? Condition { get; set; }
         public SubBrandDto? SubBrand { get; set; }
         public ProductTypeDto? ProductType { get; set; }
-        //public List<ProductPhotoDto>? ProductPhotos { get; set; } = new();
+        public List<ProductPhotoDto>? ProductPhotos { get; set; } = new();
     }
     public class CompactProductDto : BasePropertiesDto
     {
@@ -34,5 +34,6 @@ namespace Core.DTOs.Product
         public CompactConditionDto? Condition { get; set; }
         public CompactSubBrandDto? SubBrand { get; set; }
         public CompactProductTypeDto? ProductType { get; set; }
+        public List<CompactProductPhotoDto>? ProductPhotos { get; set; } = new();
     }
 }
